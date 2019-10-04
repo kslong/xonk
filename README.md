@@ -1,11 +1,11 @@
-# xork
+# xonk
 
 This repository contains tools, which are being used by ksl, wpb, and others 
 in their attempts to better understand supernova remnants.
 
 To set up everything, one should retrieve the repository:
 
-git clone https://github.com/kslong/xork.git
+git clone https://github.com/kslong/xonk.git
 
 Some modifications to paths are required to be able to use the
 routines.  
@@ -14,7 +14,7 @@ For testing purposes, one may simple source the comand file start_xork
 
 e.g
 
-start_xork
+start_xonk
 
 If one is planning to use the programs generally, then similar commands 
 should be added to one of the login files, e.g .bash_profile.
