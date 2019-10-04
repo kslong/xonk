@@ -1,0 +1,1 @@
+xterm -bg LightYellow -fg Black -T "Jupyter"  -font -adobe-courier-bold-r-normal--12-* -e 'jupyter notebook'  &

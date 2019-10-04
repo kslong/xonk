@@ -1,0 +1,2 @@
+export PATH=$HOME/xork/bin/:$PATH
+export PYTHONPATH=$HOME/xork/py_progs/:$PATH

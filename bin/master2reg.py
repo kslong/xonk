@@ -1,0 +1,1 @@
+../py_progs/general/master2reg.py
