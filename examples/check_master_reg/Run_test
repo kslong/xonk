@@ -1,0 +1,17 @@
+# Convert a region file to a masterfile
+# This test sould produce test.reg.txt
+
+reg2master.py test.reg
+
+# Convert a masterfile back to a region file
+# This test should produce a region file test.reg.txt.reg
+# which is similar to the original file
+
+master2reg.py test.reg.txt
+
+# Convert a masterfile to an excel spread sheet
+
+ascii2excel.py  test.reg.txt
+
+# Now convert it back
+excel2ascii.py test.reg.xls

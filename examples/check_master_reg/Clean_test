@@ -1,0 +1,4 @@
+rm new_test.reg.txt
+rm test.reg.txt
+rm test.reg.txt.reg
+rm test.reg.xls
