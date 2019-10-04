@@ -1,0 +1,6 @@
+xpaset -p ds9 frame $2    # Select the frame
+xpaset -p ds9 frame reset # Reset the frame to its defaults
+xpaset -p ds9 file $1     # Load the frame 
+xpaset -p ds9 scale linear
+xpaset -p ds9 cmap invert
+xpaset -p ds9 scale limits $3  $4
