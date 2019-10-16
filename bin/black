@@ -1,0 +1,4 @@
+export PROMPT_COMMAND='echo -ne "\033]0;Pescado: ${PWD}\007"'
+export PS1='Pescado:\W : '
+# xterm -sb -bg LightYellow -font -adobe-courier-bold-r-normal--12-* -T "Pescado   "   &
+xterm -sb -fg White -bg Black  -font -adobe-courier-bold-r-normal--14-* -T "Pescado   "   &
