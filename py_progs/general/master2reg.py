@@ -144,7 +144,12 @@ def read_masterfile(filename,xtype='circle',xmajor=3,xminor=3,xtheta=0.0):
     150220    ksl    Modified to use astropy
     '''
 
-    data=ascii.read(filename)
+    try:
+        data=ascii.read(filename)
+    except:
+        print('Failed to read %s',filename)
+        return(0)
+
     colnames=data.colnames
 
     print(colnames)
@@ -210,8 +215,8 @@ def read_masterfile(filename,xtype='circle',xmajor=3,xminor=3,xtheta=0.0):
             print('       Minimally need Source_name,RA,Dec')
             return
         ok=True
-        print('test',colnames)
-        print('test','RegType' in colnames)
+        # print('test',colnames)
+        # print('test','RegType' in colnames)
 
 
         if ('RegType' in colnames)==False:
@@ -223,6 +228,9 @@ def read_masterfile(filename,xtype='circle',xmajor=3,xminor=3,xtheta=0.0):
             ok=False
         if ('Theta' in colnames)==False:
             ok=False
+
+        if ('Color' in colnames)==False:
+            data['Color']='Unkown'
 
         print('OK',ok)
         if ok==False:
@@ -241,9 +249,10 @@ def read_masterfile(filename,xtype='circle',xmajor=3,xminor=3,xtheta=0.0):
         data['Major']=xmajor
         data['Minor']=0.0
         data['Theta']=0.0
+        data['Color']='Unknown'
 
     # Make sure it is in the correct order
-    xdata=data['Source_name','RA','Dec','RegType','Major','Minor','Theta']
+    xdata=data['Source_name','RA','Dec','RegType','Major','Minor','Theta','Color']
 
     ttype='unknown'
     return xdata,ttype
@@ -261,7 +270,25 @@ def write_regionfile(regionfile,records,source='unknown',type='unknown',color='r
 
     # print(records[len(records)/2])
 
-    print('ok: got here')
+    # print('ok: got here')
+
+    # First we need to understand how we are going to treat colors, namely whether
+    # we need to write this out individually or collectively.  Our assumption is
+    # that we will not change colors if the colors are different for different
+    # lines of the master table
+
+    records.info()
+
+    xcolor=False
+    i=0
+    while i<len(records):
+        if records['Color'][i]!=records['Color'][i-1]:
+            xcolor=True
+            break
+        i+=1
+
+    if xcolor==True:
+        print('There are different colors for different region files, so we will preserve colors')
 
     f=open(regionfile,'w')
 
@@ -283,26 +310,45 @@ def write_regionfile(regionfile,records,source='unknown',type='unknown',color='r
         dec=z['Dec']
         regtype=z['RegType']
         x1=z['Major']
+        zcolor=z['Color']
         if type=='physical' or type=='image':
             if z['RegType']=='ellipse' and z['Minor']>0.0:
                 x2=z['Minor']
                 theta=z['Theta']
-                f.write('ellipse(%f,%f,%.2f,%.2f,%.1f) # text={%s}\n' % (ra,dec,x1,x2,theta,name))
+                if xcolor:
+                    f.write('ellipse(%f,%f,%.2f,%.2f,%.1f) # color=%s text={%s}\n' % (ra,dec,x1,x2,theta,zcolor,name))
+                else:
+                    f.write('ellipse(%f,%f,%.2f,%.2f,%.1f) # text={%s}\n' % (ra,dec,x1,x2,theta,name))
             else:
-                f.write('circle(%f,%f,%.2f)  # text={%s}\n' % (ra,dec,x1,name))
+                if xcolor:
+                    f.write('circle(%f,%f,%.2f)  # color=%s text={%s}\n' % (ra,dec,x1,zcolor,name))
+                else:
+                    f.write('circle(%f,%f,%.2f)  # text={%s}\n' % (ra,dec,x1,name))
         else: # We assume this is a normal masterfile with RA, DECs and sizes in arcsec
             if z['RegType']=='ellipse' and z['Minor']>0.0:
                 x2=z['Minor']
                 theta=z['Theta']
                 try:
-                    f.write('ellipse(%f,%f,%.2f",%.2f",%.1f) # text={%s}\n' % (ra,dec,x1,x2,theta,name))
+                    if xcolor:
+                        f.write('ellipse(%f,%f,%.2f",%.2f",%.1f) # color=%s text={%s}\n' % (ra,dec,x1,x2,theta,zcolor,name))
+                    else:
+                        f.write('ellipse(%f,%f,%.2f",%.2f",%.1f) # text={%s}\n' % (ra,dec,x1,x2,theta,name))
                 except:
-                    f.write('ellipse(%s,%s,%.2f",%.2f",%.1f) # text={%s}\n' % (ra,dec,x1,x2,theta,name))
+                    if xcolor:
+                        f.write('ellipse(%s,%s,%.2f",%.2f",%.1f) # color=%s,text={%s}\n' % (ra,dec,x1,x2,theta,zcolor,name))
+                    else:
+                        f.write('ellipse(%s,%s,%.2f",%.2f",%.1f) # text={%s}\n' % (ra,dec,x1,x2,theta,name))
             else:
                 try:
-                    f.write('circle(%f,%f,%.2f")  # text={%s}\n' % (ra,dec,x1,name))
+                    if xcolor:
+                        f.write('circle(%f,%f,%.2f")  # color=%s text={%s}\n' % (ra,dec,x1,zcolor,name))
+                    else:
+                        f.write('circle(%f,%f,%.2f")  # text={%s}\n' % (ra,dec,x1,name))
                 except TypeError:
-                    f.write('circle(%s,%s,%.2f")  # text={%s}\n' % (ra,dec,x1,name))
+                    if xcolor:
+                        f.write('circle(%s,%s,%.2f")  # color=%s text={%s}\n' % (ra,dec,x1,color,name))
+                    else:
+                        f.write('circle(%s,%s,%.2f")  # text={%s}\n' % (ra,dec,x1,name))
 
         i=i+1
     f.close()
