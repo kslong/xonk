@@ -1,2 +1,2 @@
 export PATH=$HOME/xonk/bin/:$PATH
-export PYTHONPATH=$HOME/xonk/py_progs/:$PATH
+export PYTHONPATH=$HOME/xonk/py_progs/general/:$HOME/xonk/py_progs/util:$PATH

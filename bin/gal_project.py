@@ -1,0 +1,1 @@
+../py_progs/general/gal_project.py

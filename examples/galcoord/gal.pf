@@ -1,0 +1,7 @@
+Galaxy.RA                      204.2539583
+Galaxy.Dec                     -29.865416
+Galaxy.Position.Angle(deg)     45
+Galaxy.Inclination(deg)        24
+Galaxy.Distance(kpc):          4610
+Input_file                     snr_radio_forced.txt   
+Output_file                    test.txt
