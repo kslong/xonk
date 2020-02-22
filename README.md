@@ -14,7 +14,7 @@ For testing purposes, one may simple source the comand file start_xork
 
 e.g
 
-start_xonk
+source start_xonk
 
 If one is planning to use the programs generally, then similar commands 
 should be added to one of the login files, e.g .bash_profile.
