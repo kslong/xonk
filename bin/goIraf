@@ -1,0 +1,2 @@
+source activate iraf27
+xgterm -bg DarkGreen -fg Yellow -T "Iraf"  -font -adobe-courier-bold-r-normal--12-* -e go_iraf &
