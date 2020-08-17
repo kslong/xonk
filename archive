@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# History 
+# 	080512	ksl	Updated so could give special designation, e.g an old date to the
+#			file if that was desired
+#	090528	ksl	Removed dependencies on other routines
+
+if [ $# -lt 1 ]  
+then
+        echo "Usage: Archive [-x special] dirname"
+	echo "Normally Archive dirname produces z.dirname.date.gz"
+        echo "-x replaces date with whatever special word one chooses"
+        exit
+fi
+
+if [ $1 = "-x" ]
+then
+	NEWDIRNAME=$3.$2
+	XDIR=$3
+else
+	NEWDIRNAME=$1.`date "+%y%m%d"`
+	XDIR=$1
+fi
+
+# Now make a cp of the diretory we want to archive in tmp, since we don't want to
+# do anything to this version of this directory
+CURDIR=`pwd`
+ME=`whoami`
+
+
+mkdir tmp
+rsync -au $XDIR tmp
+
+cd tmp
+ls
+echo The new directory name:   $NEWDIRNAME
+mv $XDIR $NEWDIRNAME     
+echo Archive of $1 on `date "+%y%m%d"` from $CURDIR by $ME >>$NEWDIRNAME/History.txt
+find $NEWDIRNAME \( -name 'trace' -o -name 'core.*' -o -name '*.o' -o -name '*.ispy' -o -name '*~' -o -name '*pyc' \)  -print -exec rm {} \; -o -fstype nfs -prune 
+tar cvzf $NEWDIRNAME.tar.gz  $NEWDIRNAME
+mv $NEWDIRNAME.tar.gz ../z.$NEWDIRNAME.tar.gz
+
+# Now cleanup
+cd ..
+rm -r -f tmp
+
